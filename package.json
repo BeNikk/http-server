@@ -1,0 +1,23 @@
+{
+  "name": "http-server",
+  "version": "1.0.0",
+  "description": "Writing an HTTP server from scratch.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BeNikk/http-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BeNikk/http-server/issues"
+  },
+  "homepage": "https://github.com/BeNikk/http-server#readme",
+  "dependencies": {
+    "typescript": "^5.8.3"
+  }
+}
