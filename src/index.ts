@@ -7,9 +7,25 @@ const server = net.createServer((c) => {
   // 'connection' listener.
   console.log('client connected');
   c.on('data',(data)=>{
-    const stringifiedData = data.toString(); //stringifying the data and logging it
+    console.log("Data");
+    const stringifiedData = data.toString(); //stringifying the request data and logging it
     console.log(stringifiedData);
-
+    const body = 'hello';
+    const response = //to make it a valid HTTP response, this is what makes the TCP protocol HTTP
+    'HTTP/1.1 200 OK\r\n' +
+    `Content-Length: ${body.length}\r\n` +
+    'Content-Type: text/plain\r\n' +
+    '\r\n' +
+    body;
+  
+    c.write(response,()=>{
+      c.end(); 
+      /*the above line is to close the request response cycle as soon as we send a response, which is typical to client 
+      server architecture
+      without this line, socket(not server) will throw an error as the client(curl/postman in this case) is closing the 
+      connection before the server does.
+      */
+    });
   })
   c.on('end', () => {
     console.log('client disconnected');
@@ -17,22 +33,6 @@ const server = net.createServer((c) => {
   c.on('error',(e)=>{
     console.log(`error occured ${e}`);
   })
-  const body = 'hello';
-  const response = //to make it a valid HTTP response, this is what makes the TCP protocol HTTP
-  'HTTP/1.1 200 OK\r\n' +
-  `Content-Length: ${body.length}\r\n` +
-  'Content-Type: text/plain\r\n' +
-  '\r\n' +
-  body;
-
-  c.write(response,()=>{
-    c.end(); 
-    /*the above line is to close the request response cycle as soon as we send a response, which is typical to client 
-    server architecture
-    without this line, socket(not server) will throw an error as the client(curl/postman in this case) is closing the 
-    connection before the server does.
-    */
-  });
   c.pipe(c);
 });
 server.on('error', (err) => {
