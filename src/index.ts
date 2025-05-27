@@ -1,7 +1,10 @@
 /*
 This code is an example of creating raw http server without any modules, in JS/TS
 */
+import fs from 'fs';
 import net from 'node:net';
+import path from 'path';
+const paths = path;
 const server = net.createServer((c) => {
    // this function runs everytime a client is connected
   // 'connection' listener.
@@ -13,28 +16,38 @@ const server = net.createServer((c) => {
     //parsing the request
       const [requestLine, ...headerLines] = stringifiedRequestData.split('\r\n');
       const [method, path, protocol] = requestLine.split(' ');
-
+      //logging all the request data
       console.log(`Method: ${method}`);
       console.log(`Path: ${path}`);
       console.log(`Protocol: ${protocol}`);
-      
-
 
     //moving the response inside data ensures that i only send the data once i have received a request.
-        let body = '';
+        let body:string|any = '';
+        let statusLine = 'HTTP/1.1 200 OK\r\n';
+        let contentType = 'text/plain'
 
         if (path === '/') {
-        body = 'Welcome to the homepage!';
+        contentType = 'text/html'
+        body = '<h1>Welcome to homepage</h1>';
         } else if (path === '/about') {
         body = 'This is the about page.';
-        } else {
+        }
+        else if(path ==='/profile'){
+        const html = fs.readFileSync(paths.join(__dirname,'..','/static/index.html'),'utf-8');
+        body = html;
+        contentType = 'text/html';
+        }
+        else {
+        statusLine = 'HTTP/1.1 404 Not Found\r\n';
         body = '404 Not Found';
         }
     const response = //to make it a valid HTTP response, this is what makes the TCP protocol HTTP
-    'HTTP/1.1 200 OK\r\n' +
+     statusLine +
     `Content-Length: ${body.length}\r\n` +
-    'Content-Type: text/plain\r\n' +
+    `Content-Type: ${contentType}\r\n` +
+    'Connection: close\r\n'+
     '\r\n' +
+
     body;
   
     c.write(response,()=>{
