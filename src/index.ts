@@ -8,9 +8,28 @@ const server = net.createServer((c) => {
   console.log('client connected');
   c.on('data',(data)=>{
     console.log("Data");
-    const stringifiedData = data.toString(); //stringifying the request data and logging it
-    console.log(stringifiedData);
-    const body = 'hello';
+    const stringifiedRequestData = data.toString(); //stringifying the request data and logging it
+    console.log(stringifiedRequestData);
+    //parsing the request
+      const [requestLine, ...headerLines] = stringifiedRequestData.split('\r\n');
+      const [method, path, protocol] = requestLine.split(' ');
+
+      console.log(`Method: ${method}`);
+      console.log(`Path: ${path}`);
+      console.log(`Protocol: ${protocol}`);
+      
+
+
+    //moving the response inside data ensures that i only send the data once i have received a request.
+        let body = '';
+
+        if (path === '/') {
+        body = 'Welcome to the homepage!';
+        } else if (path === '/about') {
+        body = 'This is the about page.';
+        } else {
+        body = '404 Not Found';
+        }
     const response = //to make it a valid HTTP response, this is what makes the TCP protocol HTTP
     'HTTP/1.1 200 OK\r\n' +
     `Content-Length: ${body.length}\r\n` +
